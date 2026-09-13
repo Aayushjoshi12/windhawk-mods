@@ -12454,11 +12454,8 @@ static RECT InterpolateResizeRect(const RECT& fromRect,
 
 static float EaseResizeAnimation(float progress) {
     progress = std::clamp(progress, 0.0f, 1.0f);
-    if (progress < 0.5f) {
-        return 4.0f * progress * progress * progress;
-    }
-    const float t = -2.0f * progress + 2.0f;
-    return 1.0f - (t * t * t) / 2.0f;
+    const float remaining = 1.0f - progress;
+    return 1.0f - remaining * remaining * remaining;
 }
 
 static void PumpResizeAnimationMessages() {
