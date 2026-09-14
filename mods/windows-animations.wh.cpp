@@ -12591,12 +12591,20 @@ static bool IsResizeAnimationCommand(HWND hWnd, int command,
     return maximize || unmaximize;
 }
 
+static bool IsWindowCloakedForResizeAnimation(HWND hWnd) {
+    BOOL cloaked = FALSE;
+    return SUCCEEDED(DwmGetWindowAttribute(
+               hWnd, DWMWA_CLOAKED, &cloaked, sizeof(cloaked))) &&
+           cloaked;
+}
+
 static bool PrepareResizeAnimation(HWND hWnd,
                                    PendingResizeAnimation* pending) {
     if (!pending ||
         !g_maximizeAnimation.load(std::memory_order_relaxed) ||
         g_unloading.load(std::memory_order_relaxed) ||
-        !IsOurWindow(hWnd) || !IsAppMainWindow(hWnd)) {
+        !IsOurWindow(hWnd) || !IsAppMainWindow(hWnd) ||
+        IsWindowCloakedForResizeAnimation(hWnd)) {
         return false;
     }
 
