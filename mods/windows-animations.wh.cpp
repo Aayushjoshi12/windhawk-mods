@@ -13729,8 +13729,6 @@ BOOL WINAPI ShowWindow_Hook(HWND hWnd, int cmd) {
     if (IsResizeAnimationCommand(hWnd, cmd, &maximizing)) {
         PrepareResizeAnimation(hWnd, &resizeAnimation);
     }
-    const bool mayCreateStableWindow =
-        !IsWindowVisible(hWnd) && IsLaunchCommand(cmd);
     if (IsShowCmdForWinEvent(cmd)) {
         EnsureWinEventThreadStarted();
         PublishShowDesktopCloakEndpointForWindow(hWnd);
@@ -13766,7 +13764,6 @@ BOOL WINAPI ShowWindow_Hook(HWND hWnd, int cmd) {
             CancelResizeAnimation(&resizeAnimation);
         }
     }
-    if (mayCreateStableWindow) ScheduleStableGpuWarmup();
     return result;
 }
 BOOL WINAPI ShowWindowAsync_Hook(HWND hWnd, int cmd) {
